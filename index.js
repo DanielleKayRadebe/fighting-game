@@ -9,6 +9,8 @@ canvas.height = 576
 //to differentiate our canvas from the browser background, canvas is now black
 c.fillRect(0, 0, canvas.width, canvas.height)
 
+const gravity = 0.2
+
 //creating object instances of our characters so that they can act independently from each-other
 class Sprite {
     //constructor
@@ -57,7 +59,9 @@ class Sprite {
 
         if(this.position.y + this.heightPlayer + this.velocity.y >= canvas.height){
             this.velocity.y = 0
-        }
+            //this just ensures that gravity is real so our player doesnt just chill
+            //in the air so it will always fall at gravities rate which we set at 0.2
+        } else this.velocity.y += gravity
     }
 
     updateEnemy(){
@@ -69,7 +73,7 @@ class Sprite {
 
         if(this.position.y + this.heightEnemy + this.velocity.y >= canvas.height){
             this.velocity.y = 0
-        }
+        } else this.velocity.y += gravity
     }
 
 }
@@ -119,6 +123,21 @@ console.log(enemy)
 //printing out the player onto our canvas
 console.log(player)
 
+//keys that our game uses
+//all set to false until they are actually pressed
+const keys = {
+    ArrowRight: {
+        pressed: false
+    },
+    ArrowLeft: {
+        pressed: false
+    },
+    ArrowUp: {
+        pressed: false
+    }
+}
+let lastKey
+
 //now we are going to create an animation loop 
 //our players will fall to the bottom of the screen and be constantly moving
 function animate(){
@@ -141,6 +160,16 @@ function animate(){
     //by constantly calling draw
     player.update()
     enemy.updateEnemy()
+
+    player.velocity.x = 0
+    //so we monitor to see if our keys are being pressed
+    //so instead of changing velocity to 0 if any button is lifted despite the other being pressed down
+    // we have a true and false and so long as left or right is true our player will keep moving
+    if (keys.ArrowRight.pressed && lastKey === 'ArrowRight'){
+        player.velocity.x = 3
+    } else if (keys.ArrowLeft.pressed && lastKey === 'ArrowLeft'){
+        player.velocity.x = -3
+    }
 }
 
 //remember to call the animate function so that our animation actually takes place
@@ -154,14 +183,22 @@ animate()
 window.addEventListener('keydown', (event) => {
     switch (event.key) {
         case 'ArrowRight':
-            //if the key 'arrow right' is pressed then the velocity of our players x axis is changed
-            //so our player moves forward by 1 px so long as our arrow right key is pressed down
-            player.velocity.x = 1
+            //so when we press our arrow right key then our value called pressed that is assigned
+            //to our arrow right in keys is changed to true
+            keys.ArrowRight.pressed = true
+            lastKey = 'ArrowRight'
             break
         case 'ArrowLeft':
-            //if the key 'arrow left' is pressed then the velocity of our players x axis is changed
-            //so our player moves back by 1 px so long as our arrow right left is pressed down
-            player.velocity.x = -1
+            //same here so when we press down our left key then pressed changes to true despite if right 
+            //is being pressed down or not
+            keys.ArrowLeft.pressed = true
+            lastKey = 'ArrowLeft'
+            break
+        case 'ArrowUp':
+            //here we add a jump feature so when we press up our player jumps up or bounces
+            //so if we press up we set arrow up to true and our player jumps
+            keys.ArrowUp.pressed = true
+            player.velocity.y = -10
             break
     }
     console.log(event.key);
@@ -172,17 +209,20 @@ window.addEventListener('keydown', (event) => {
 window.addEventListener('keyup', (event) => {
     switch (event.key) {
         case 'ArrowRight':
-            //if the key 'arrow right' is pressed then the velocity of our players x axis is changed back to 0
-            //our players velocity of x is changed to 0 when our arrow right key is lifted 
-            //our player stops moving
-            player.velocity.x = 0
+            //when the right key is no longer pressed then we change arrowright.pressed back to false
+            //so our velocity changes back to 0 and our player stops moving
+            keys.ArrowRight.pressed = false
             break
         case 'ArrowLeft':
-            //if the key 'arrow left' is pressed then the velocity of our players x axis is changed back to 0
-            //our players velocity of x is changed to 0 when our left key is lifted 
-            //our player stops moving
-            player.velocity.x = 0
-            break    
+            //same here
+            keys.ArrowLeft.pressed = false
+            break
+        case 'ArrowUp':
+            //here we add a jump feature so when we press up our player jumps up or bounces
+            //so if we press up we set arrow up to true and our player jumps
+            keys.ArrowUp.pressed = false
+            player.velocity.y = 0
+            break
     }
     console.log(event.key);
 })
