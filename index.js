@@ -11,6 +11,35 @@ c.fillRect(0, 0, canvas.width, canvas.height)
 
 const gravity = 0.2
 
+class Rock {
+
+    constructor({position, velocity}){
+        this.position = position
+        this.velocity = velocity
+        this.height = 15
+        this.width = 15
+    }
+
+    draw(){
+        c.fillStyle = 'green'
+    
+        c.fillRect(this.position.x, this.position.y, this.width, this.height);
+    }
+
+    update(){
+  
+        this.draw()
+        // this.position.y += this.velocity.y
+    
+        this.position.x += this.velocity.x
+
+        if(this.position.x + this.width + this.velocity.x >= canvas.width +30){
+            this.velocity.x = 0
+        } else this.velocity.x += 0.01
+    }
+
+}
+
 //creating object instances of our characters so that they can act independently from each-other
 class Sprite {
     //constructor
@@ -22,60 +51,38 @@ class Sprite {
         //alter our sprite position so our player and enemy move downwards
         this.velocity = velocity
 
-        this.heightPlayer = 120
-        this.heightEnemy = 170
+        this.height = 120
     }
 
     //drawing our player
-    draw(){
+    draw(color){
         //makes our fighting player red
-        c.fillStyle = 'red'
+        c.fillStyle = color
         //position of the player object and the amount of pixels they take up
         //the position of the object and the size of the object
-        c.fillRect(this.position.x, this.position.y, 50, this.heightPlayer);
-    }
-
-    drawEnemy(){
-        //same as our player method but with the color blue instead of red
-        //so that we can tell the difference between our player and enemy
-        c.fillStyle = 'blue'
-        //we indicate the position of our enemy and we give it a size
-        //here ive made the enemy bigger than the player
-        c.fillRect(this.position.x, this.position.y, 70, this.heightEnemy);
+        c.fillRect(this.position.x, this.position.y, 50, this.height);
     }
 
     update(){
         //whenever we call update we call draw, this is for our animations
         //this means that our position.y is going to have 10 frames added to it everytime we loop
-        this.draw()
+        this.draw("red")
         this.position.y += this.velocity.y
         //now we change the velocity from 0 to something else
         //we change the position of y constantly and make it add the value of our velocity
         //over and over again making it go down
 
-        //so what we have done here is when we hit the 'd' key our position
+        //so what we have done here is when we hit the 'arror right' key our position
         //moves forward by our x axis velocity value
         this.position.x += this.velocity.x
 
-        if(this.position.y + this.heightPlayer + this.velocity.y >= canvas.height){
+        //this stops our players from falling when they hit the floor
+        if(this.position.y + this.height + this.velocity.y >= canvas.height){
             this.velocity.y = 0
             //this just ensures that gravity is real so our player doesnt just chill
             //in the air so it will always fall at gravities rate which we set at 0.2
         } else this.velocity.y += gravity
     }
-
-    updateEnemy(){
-        //whenever we call update we call draw, this is for our animations
-        //this means that our position.y is going to have 10 frames added to it everytime we loop
-        this.drawEnemy()
-        this.position.y += this.velocity.y
-        //now we change the velocity from 0 to something else
-
-        if(this.position.y + this.heightEnemy + this.velocity.y >= canvas.height){
-            this.velocity.y = 0
-        } else this.velocity.y += gravity
-    }
-
 }
 
 //calling the sprite class we made and creating an object of it with x and y values of 0
@@ -92,6 +99,7 @@ const player = new Sprite({
     }
 })
 
+
 //now we create an enemy the same way we create a player
 //we ensure the position is at the opposite side of our screen by changing the x and y values
 const enemy = new Sprite({
@@ -102,7 +110,7 @@ const enemy = new Sprite({
     velocity: {
         x:0,
         //how fast our player moves down along the y axis, basically falling, gravity
-        y:5
+        y:4
     }
 })
 
@@ -123,6 +131,7 @@ console.log(enemy)
 //printing out the player onto our canvas
 console.log(player)
 
+
 //keys that our game uses
 //all set to false until they are actually pressed
 const keys = {
@@ -133,6 +142,9 @@ const keys = {
         pressed: false
     },
     ArrowUp: {
+        pressed: false
+    },
+    d: {
         pressed: false
     }
 }
@@ -146,20 +158,17 @@ function animate(){
     //the condition below recurs the function
     window.requestAnimationFrame(animate)
 
-    //to avoid a paint like effect we clear our rect
-    //like fill rect but removes colour instead of adding
-    //no longer using this because it got rid of our canvas colour
-
     //ensuring our canvas stays black
     c.fillStyle = 'black'
 
-    //then removing paint like effect
+    //then removing paint like effect of our players
     c.fillRect(0, 0, canvas.width, canvas.height)
 
     //these change the drawn position of our players constantly by 10px
     //by constantly calling draw
     player.update()
-    enemy.updateEnemy()
+    enemy.update()
+    // rock.update()
 
     player.velocity.x = 0
     //so we monitor to see if our keys are being pressed
@@ -170,6 +179,12 @@ function animate(){
     } else if (keys.ArrowLeft.pressed && lastKey === 'ArrowLeft'){
         player.velocity.x = -3
     }
+
+    if (keys.d.pressed){
+        console.log(rock)
+        rock.update()
+    }
+
 }
 
 //remember to call the animate function so that our animation actually takes place
@@ -199,6 +214,18 @@ window.addEventListener('keydown', (event) => {
             //so if we press up we set arrow up to true and our player jumps
             keys.ArrowUp.pressed = true
             player.velocity.y = -10
+            break
+        case 'd':
+            keys.d.pressed = true
+            rock = new Rock({
+                position:{
+                    x:player.position.x + 30, 
+                    y:470
+                },
+                velocity: {
+                    x:3,
+                }
+            })
             break
     }
     console.log(event.key);
