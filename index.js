@@ -11,6 +11,7 @@ c.fillRect(0, 0, canvas.width, canvas.height)
 
 const gravity = 0.2
 
+let rocks = [];
 class Rock {
 
     constructor({position, velocity}){
@@ -181,8 +182,8 @@ function animate(){
     }
 
     if (keys.d.pressed){
-        console.log(rock)
-        rock.update()
+        // console.log(rocks)
+        // rocks.update()
     }
 
 }
@@ -213,11 +214,11 @@ window.addEventListener('keydown', (event) => {
             //here we add a jump feature so when we press up our player jumps up or bounces
             //so if we press up we set arrow up to true and our player jumps
             keys.ArrowUp.pressed = true
-            player.velocity.y = -10
+            player.velocity.y = -75
             break
         case 'd':
             keys.d.pressed = true
-            rock = new Rock({
+            rocks.push(new Rock({
                 position:{
                     x:player.position.x + 30, 
                     y:470
@@ -226,6 +227,8 @@ window.addEventListener('keydown', (event) => {
                     x:3,
                 }
             })
+            )
+            console.log(rocks);
             break
     }
     console.log(event.key);
