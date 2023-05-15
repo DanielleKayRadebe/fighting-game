@@ -22,19 +22,65 @@ class Rock {
 
     draw(){
         c.fillStyle = 'green'
-    
         c.fillRect(this.position.x, this.position.y, this.width, this.height);
     }
 
-    update(){
-  
+    update(){    
         this.draw()
-        // this.position.y += this.velocity.y
-    
         this.position.x += this.velocity.x
-
         if(this.position.x + this.width + this.velocity.x >= canvas.width +30){
             this.velocity.x = 0
+            keys.d.pressed = false
+        } else this.velocity.x += 0.01
+    }
+
+}
+
+class Paper {
+
+    constructor({position, velocity}){
+        this.position = position
+        this.velocity = velocity
+        this.height = 20
+        this.width = 15
+    }
+
+    draw(){
+        c.fillStyle = 'white'
+        c.fillRect(this.position.x, this.position.y, this.width, this.height);
+    }
+
+    update(){    
+        this.draw()
+        this.position.x += this.velocity.x
+        if(this.position.x + this.width + this.velocity.x >= canvas.width +30){
+            this.velocity.x = 0
+            keys.f.pressed = false
+        } else this.velocity.x += 0.01
+    }
+
+}
+
+class Scissors {
+
+    constructor({position, velocity}){
+        this.position = position
+        this.velocity = velocity
+        this.height = 20
+        this.width = 5
+    }
+
+    draw(){
+        c.fillStyle = 'gold'
+        c.fillRect(this.position.x, this.position.y, this.width, this.height);
+    }
+
+    update(){    
+        this.draw()
+        this.position.x += this.velocity.x
+        if(this.position.x + this.width + this.velocity.x >= canvas.width +30){
+            this.velocity.x = 0
+            keys.g.pressed = false
         } else this.velocity.x += 0.01
     }
 
@@ -146,6 +192,12 @@ const keys = {
     },
     d: {
         pressed: false
+    },
+    f: {
+        pressed: false
+    },
+    g: {
+        pressed: false
     }
 }
 let lastKey
@@ -183,6 +235,14 @@ function animate(){
     if (keys.d.pressed){
         console.log(rock)
         rock.update()
+    }
+    if (keys.f.pressed){
+        console.log(paper)
+        paper.update()
+    }
+    if (keys.g.pressed){
+        console.log(scissor)
+        scissor.update()
     }
 
 }
@@ -223,7 +283,31 @@ window.addEventListener('keydown', (event) => {
                     y:470
                 },
                 velocity: {
-                    x:3,
+                    x:12,
+                }
+            })
+            break
+        case 'f':
+            keys.f.pressed = true
+            paper = new Paper({
+                position:{
+                    x:player.position.x + 30, 
+                    y:470
+                },
+                velocity: {
+                    x:12,
+                }
+                })
+                break
+        case 'g':
+            keys.g.pressed = true
+            scissor = new Scissors({
+                position:{
+                x:player.position.x + 30, 
+                y:470
+                },
+                velocity: {
+                x:12,
                 }
             })
             break
@@ -250,8 +334,6 @@ window.addEventListener('keyup', (event) => {
             keys.ArrowUp.pressed = false
             player.velocity.y = 0
             break
-        case 'd':
-            rock = rock1
     }
     console.log(event.key);
 })
