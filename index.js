@@ -211,6 +211,9 @@ function animate(){
     if (keys.d.pressed){
         console.log(rock)
         rock.update()
+        
+        console.log(enemyRock)
+        enemyRock.update()
     }
     if (keys.f.pressed){
         console.log(paper)
@@ -220,6 +223,7 @@ function animate(){
         console.log(scissor)
         scissor.update()
     }
+
 
 }
 
@@ -270,7 +274,17 @@ window.addEventListener('keydown', (event) => {
             })
             break
     }
-    console.log(event.key);
 })
 
-
+enemyDefence = Math.floor(Math.random() * 3);
+if (enemyDefence == 0){
+    enemyRock = new Rock({
+        position:{
+            x:enemy.position.x + 30, 
+            y:470
+        },
+        velocity: {
+            x:-12,
+        }
+    })
+}
