@@ -11,7 +11,6 @@ c.fillRect(0, 0, canvas.width, canvas.height)
 
 const gravity = 0.2
 
-let rocks = [];
 class Rock {
 
     constructor({position, velocity}){
@@ -182,8 +181,8 @@ function animate(){
     }
 
     if (keys.d.pressed){
-        // console.log(rocks)
-        // rocks.update()
+        console.log(rock)
+        rock.update()
     }
 
 }
@@ -218,7 +217,7 @@ window.addEventListener('keydown', (event) => {
             break
         case 'd':
             keys.d.pressed = true
-            rocks.push(new Rock({
+            rock = new Rock({
                 position:{
                     x:player.position.x + 30, 
                     y:470
@@ -227,8 +226,6 @@ window.addEventListener('keydown', (event) => {
                     x:3,
                 }
             })
-            )
-            console.log(rocks);
             break
     }
     console.log(event.key);
@@ -253,6 +250,8 @@ window.addEventListener('keyup', (event) => {
             keys.ArrowUp.pressed = false
             player.velocity.y = 0
             break
+        case 'd':
+            rock = rock1
     }
     console.log(event.key);
 })
